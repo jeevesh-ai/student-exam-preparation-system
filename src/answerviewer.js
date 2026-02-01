@@ -322,70 +322,38 @@ function Answerviewer({ question, setQuestion, onBack, onAnswerFound }) {
 
   // Confirm PDF selection and "send to backend"
   const handleConfirmClick = async () => {
-    if (!pdfList.length) return; // No PDF uploaded
+    if (!pdfList.length) return;
 
-    // 1️⃣ Upload PDF + Question to backend
     const lastPdf = pdfList.at(-1);
-    await sendPdfQuestionToBackend(editableQuestion, lastPdf);
 
-    // 2️⃣ Show searching animation
     setSearching(true);
     setViewerPhase("searching");
     setConfirming(true);
-    setConfirmed(false);
 
-    setTimeout(async () => {
-      setConfirming(false);
-      setConfirmed(true);
+    // ✅ Reuse processTextbook logic for PDF tab
+    const result = await processTextbook(
+      editableQuestion,
+      lastPdf.file || lastPdf,
+      null
+    );
 
-      setAnswerFound(null); // reset previous state
+    setConfirming(false);
+    setConfirmed(true);
+    setSearching(false);
 
-      try {
-        const pdfName = lastPdf.name;
-        const formData = new FormData();
-        formData.append("question", editableQuestion);
-        formData.append("pdfName", pdfName);
-
-        const res = await fetch("http://127.0.0.1:8000/pdf/get-answer", {
-          method: "POST",
-          body: formData,
-        });
-
-        const data = await res.json();
-
-        if (data.status === "success" && data.answer) {
-          // ✅ Answer exists → open reader
-          setReaderAnswer(data.answer);
-          setAnswerFound(true);
-
-          setHoveredTab(null);
-          setActiveTab("PDF");
-          setLastActiveTab("PDF");
-          setViewerPhase("reader");
-
-          // optional callback
-          onAnswerFound?.({ pdfName });
-        } else if (data.status === "failure") {
-          // ❌ Answer not found → show recommendations
-          setReaderAnswer(null);       // clear any previous answer
-          setAnswerFound(false);       // triggers recommendation panel
-          setViewerPhase("ready");     // stay on tab
-        } else {
-          // ⚠️ Unexpected response
-          console.warn("Unexpected response:", data);
-          setReaderAnswer(null);
-          setAnswerFound(false);
-          setViewerPhase("ready");
-        }
-      } catch (err) {
-        console.error("Error fetching answer:", err);
-        setReaderAnswer(null);
-        setAnswerFound(false);
-        setViewerPhase("ready");
-      } finally {
-        setSearching(false); // stop animation
-      }
-    }, 1200);
+    if (result.status === "success") {
+      setReaderAnswer(result.answer);
+      setAnswerFound(true);
+      setHoveredTab(null);
+      setActiveTab("PDF");
+      setLastActiveTab("PDF");
+      setViewerPhase("reader");
+      onAnswerFound?.({ pdfName: lastPdf.name });
+    } else {
+      setReaderAnswer(null);
+      setAnswerFound(false);
+      setViewerPhase("ready");
+    }
   };
 
 
@@ -423,7 +391,7 @@ function Answerviewer({ question, setQuestion, onBack, onAnswerFound }) {
         formData.append("marks", marks);
       }
 
-      const res = await fetch("http://127.0.0.1:8000/process_textbook/", {
+      const res = await fetch("https://empty-toes-type.loca.lt/process_textbook/", {
         method: "POST",
         body: formData,
       });

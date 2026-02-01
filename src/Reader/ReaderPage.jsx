@@ -116,7 +116,7 @@ function ReaderPage({ question, source, onBack, onAiClick, readerAnswer }) {
                   if (!onAiClick) return;
                   onAiClick({
                     question,
-                    answer: pages,
+                    answer: readerAnswer,
                     source: source,
                   });
                 }}
