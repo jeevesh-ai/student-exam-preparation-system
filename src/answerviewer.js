@@ -121,6 +121,9 @@ function Answerviewer({ question, setQuestion, onBack, onAnswerFound }) {
 
       const res = await fetch("https://empty-toes-type.loca.lt/process_ai/", {
         method: "POST",
+        headers: {
+          "Bypass-Tunnel-Reminder": "true",
+        },
         body: formData,
       });
 
@@ -140,6 +143,9 @@ function Answerviewer({ question, setQuestion, onBack, onAnswerFound }) {
 
       const res = await fetch("https://empty-toes-type.loca.lt/pdf/save", {
         method: "POST",
+        headers: {
+          "Bypass-Tunnel-Reminder": "true",
+        },
         body: formData,
       });
 
@@ -165,6 +171,9 @@ function Answerviewer({ question, setQuestion, onBack, onAnswerFound }) {
     try {
       const res = await fetch("https://empty-toes-type.loca.lt/pdf/get-answer", {
         method: "POST",
+        headers: {
+          "Bypass-Tunnel-Reminder": "true",
+        },
         body: formData,
       });
 
@@ -393,6 +402,9 @@ function Answerviewer({ question, setQuestion, onBack, onAnswerFound }) {
 
       const res = await fetch("https://empty-toes-type.loca.lt/process_textbook/", {
         method: "POST",
+        headers: {
+          "Bypass-Tunnel-Reminder": "true",
+        },
         body: formData,
       });
 
