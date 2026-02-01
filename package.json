@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "concurrently \"react-scripts start\" \"cd backendtextbook && .\\venv\\Scripts\\python -m uvicorn main:app --reload --port 8000\"",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "build": "react-scripts build",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
     "gh-pages": "^6.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19"
